@@ -19,8 +19,16 @@ RUN apt-get install -y \
 RUN apt-get clean \
  	&& rm -rf /var/lib/apt/lists/*
 
+## install composer
+
 RUN curl -sS https://getcomposer.org/installer | php
 RUN mv composer.phar /usr/local/bin/composer
+
+### install ffmpeg ###
+
+ADD ffmpeg-release-64bit-static.tar.xz /usr/local/bin
+RUN ln -s /usr/local/bin/ffmpeg-2.7-64bit-static/ffmpeg /usr/local/bin/ffmpeg \
+    && ln -s /usr/local/bin/ffmpeg-2.7-64bit-static/ffprobe /usr/local/bin/ffprobe
 
 #### config php
 
