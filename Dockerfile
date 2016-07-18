@@ -1,11 +1,11 @@
 FROM ubuntu:14.04
 MAINTAINER sergey@falinsky.com
 
-RUN apt-get update
+RUN apt-get update -y
 RUN apt-get install -y \
 	vim \
 	curl \
-	ngrok-client \
+	wget \
 	apache2 \
 	php5 \
 	php5-cli \
@@ -14,36 +14,52 @@ RUN apt-get install -y \
 	php5-gd \
 	php5-curl \
 	php5-mysql \
-	php5-xdebug
+	php5-xdebug \
+	php-pear \
+	php5-dev \
+	php5-memcache
 
 RUN apt-get clean \
  	&& rm -rf /var/lib/apt/lists/*
+
+## setup locale
+
+RUN locale-gen en_US.UTF-8
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
 
 ## install composer
 
 RUN curl -sS https://getcomposer.org/installer | php
 RUN mv composer.phar /usr/local/bin/composer
 
-### install ffmpeg ###
+## install timezonedb
+
+RUN pecl install timezonedb
+RUN sed -i '$ a\extension=timezonedb.so' /etc/php5/apache2/php.ini
+RUN sed -i '$ a\extension=timezonedb.so' /etc/php5/cli/php.ini
+
+## install ffmpeg
 
 ADD ffmpeg-release-64bit-static.tar.xz /usr/local/bin
 RUN ln -s /usr/local/bin/ffmpeg-2.7-64bit-static/ffmpeg /usr/local/bin/ffmpeg \
     && ln -s /usr/local/bin/ffmpeg-2.7-64bit-static/ffprobe /usr/local/bin/ffprobe
 
-#### config php
+## config php
 
 RUN sed -i '$ a\xdebug.var_display_max_depth=4' /etc/php5/mods-available/xdebug.ini
 RUN sed -i '$ a\xdebug.max_nesting_level=500' /etc/php5/mods-available/xdebug.ini
 RUN sed -i '$ a\xdebug.var_display_max_data=-1' /etc/php5/mods-available/xdebug.ini
 RUN sed -i '$ a\xdebug.remote_enable=1' /etc/php5/mods-available/xdebug.ini
-RUN sed -i '$ a\xdebug.remote_port="9000"' /etc/php5/mods-available/xdebug.ini
+RUN sed -i '$ a\xdebug.remote_connect_back=1' /etc/php5/mods-available/xdebug.ini
 
 RUN sed -i '$ a\opcache.max_accelerated_files=20000' /etc/php5/mods-available/opcache.ini
 RUN sed -i '$ a\opcache.interned_strings_buffer=8' /etc/php5/mods-available/opcache.ini
 RUN sed -i '$ a\opcache.memory_consumption=384' /etc/php5/mods-available/opcache.ini
 RUN sed -i '$ a\opcache.revalidate_freq=0' /etc/php5/mods-available/opcache.ini
-RUN sed -i '$ a\opcache.validate_timestamps=0' /etc/php5/mods-available/opcache.ini
-RUN sed -i '$ a\opcache.fast_shutdown=1' /etc/php5/mods-available/opcache.ini
+#RUN sed -i '$ a\opcache.validate_timestamps=0' /etc/php5/mods-available/opcache.ini
+#RUN sed -i '$ a\opcache.fast_shutdown=1' /etc/php5/mods-available/opcache.ini
 RUN sed -i '$ a\opcache.enable_cli=0' /etc/php5/mods-available/opcache.ini
 RUN sed -i '$ a\opcache.enable=1' /etc/php5/mods-available/opcache.ini
 
@@ -59,7 +75,7 @@ RUN sed -ri 's/^memory_limit\s*=\s*128M/memory_limit = 512M/g' /etc/php5/cli/php
 RUN sed -ri 's/^post_max_size\s*=\s*8M/post_max_size = 2048M/g' /etc/php5/cli/php.ini
 RUN sed -ri 's/^upload_max_filesize\s*=\s*2M/upload_max_filesize = 2048M/g' /etc/php5/cli/php.ini
 
-#### config apache
+## config apache
 
 RUN a2enmod rewrite ssl headers
 RUN mkdir /etc/apache2/ssl
@@ -72,16 +88,26 @@ RUN a2ensite app_vhost app_vhost_ssl
 
 EXPOSE 80 443
 
-RUN mkdir -p /home/webapp/htdocs/web/
-COPY index.php /home/webapp/htdocs/web/
+#RUN mkdir -p /home/webapp/htdocs/web/
+#COPY index.php /home/webapp/htdocs/web/
+#
+#RUN mkdir -p /home/webapp/htdocs/app/cache
+#RUN chown www-data:www-data /home/webapp/htdocs/app/cache
+#VOLUME /home/webapp/htdocs/app/cache
+#
+#RUN mkdir /home/webapp/htdocs/app/logs
+#RUN chown www-data:www-data /home/webapp/htdocs/app/logs
+#VOLUME /home/webapp/htdocs/app/logs
 
-RUN mkdir -p /home/webapp/htdocs/app/cache
-RUN chown www-data:www-data /home/webapp/htdocs/app/cache
-VOLUME /home/webapp/htdocs/app/cache
+RUN mkdir /unison
+RUN mkdir -p /home/webapp
 
-RUN mkdir /home/webapp/htdocs/app/logs
-RUN chown www-data:www-data /home/webapp/htdocs/app/logs
-VOLUME /home/webapp/htdocs/app/logs
+RUN ln -s /unison /home/webapp/htdocs
+
+RUN mkdir /unison/web
+COPY index.php /unison/web/
+
+VOLUME /unison
 
 COPY app_start.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/app_start.sh

@@ -6,6 +6,6 @@ Designed for running [Symfony](http://symfony.com/) applications in [Docker](htt
 How to use
 -----------------------------------------------
 
-`docker run -d --name my-great-app -v "$PWD":/home/webapp/htdocs -p 80:80 -p 443:443 falinsky/docker-ubuntu-apache-php-symfony`
+`docker run -d --name my-great-app -v "$PWD":/unison -p 80:80 -p 443:443 falinsky/docker-ubuntu-apache-php-symfony:v2.1`
 
 
