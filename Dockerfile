@@ -4,6 +4,7 @@ MAINTAINER sergey@falinsky.com
 RUN apt-get update -y
 RUN apt-get install -y \
 	vim \
+	git \
 	curl \
 	wget \
 	apache2 \
@@ -17,7 +18,8 @@ RUN apt-get install -y \
 	php5-xdebug \
 	php-pear \
 	php5-dev \
-	php5-memcache
+	php5-memcache \
+	php5-mongo
 
 RUN apt-get clean \
  	&& rm -rf /var/lib/apt/lists/*
