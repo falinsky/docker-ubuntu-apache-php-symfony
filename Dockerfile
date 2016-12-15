@@ -91,17 +91,6 @@ RUN a2ensite app_vhost app_vhost_ssl
 
 EXPOSE 80 443
 
-#RUN mkdir -p /home/webapp/htdocs/web/
-#COPY index.php /home/webapp/htdocs/web/
-#
-#RUN mkdir -p /home/webapp/htdocs/app/cache
-#RUN chown www-data:www-data /home/webapp/htdocs/app/cache
-#VOLUME /home/webapp/htdocs/app/cache
-#
-#RUN mkdir /home/webapp/htdocs/app/logs
-#RUN chown www-data:www-data /home/webapp/htdocs/app/logs
-#VOLUME /home/webapp/htdocs/app/logs
-
 RUN mkdir /unison
 RUN mkdir -p /home/webapp
 
