@@ -70,6 +70,7 @@ RUN sed -ri 's/^;date.timezone\s*=/date.timezone = UTC/g' /etc/php5/apache2/php.
 RUN sed -ri 's/^memory_limit\s*=\s*128M/memory_limit = 512M/g' /etc/php5/apache2/php.ini
 RUN sed -ri 's/^post_max_size\s*=\s*8M/post_max_size = 2048M/g' /etc/php5/apache2/php.ini
 RUN sed -ri 's/^upload_max_filesize\s*=\s*2M/upload_max_filesize = 2048M/g' /etc/php5/apache2/php.ini
+RUN sed -ri 's/^max_execution_time\s*=\s*30/max_execution_time = 300/g' /etc/php5/apache2/php.ini
 
 RUN sed -ri 's/^display_errors\s*=\s*Off/display_errors = On/g' /etc/php5/cli/php.ini
 RUN sed -ri 's/^;date.timezone\s*=/date.timezone = UTC/g' /etc/php5/cli/php.ini
