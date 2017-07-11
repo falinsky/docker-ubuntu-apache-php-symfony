@@ -15,11 +15,12 @@ RUN apt-get install -y \
 	php5-gd \
 	php5-curl \
 	php5-mysql \
-	php5-xdebug \
 	php-pear \
 	php5-dev \
 	php5-memcache \
 	php5-mongo
+	
+##	php5-xdebug \
 
 RUN apt-get clean \
  	&& rm -rf /var/lib/apt/lists/*
@@ -50,11 +51,11 @@ RUN ln -s /usr/local/bin/ffmpeg-2.7-64bit-static/ffmpeg /usr/local/bin/ffmpeg \
 
 ## config php
 
-RUN sed -i '$ a\xdebug.var_display_max_depth=4' /etc/php5/mods-available/xdebug.ini
-RUN sed -i '$ a\xdebug.max_nesting_level=500' /etc/php5/mods-available/xdebug.ini
-RUN sed -i '$ a\xdebug.var_display_max_data=-1' /etc/php5/mods-available/xdebug.ini
-RUN sed -i '$ a\xdebug.remote_enable=1' /etc/php5/mods-available/xdebug.ini
-RUN sed -i '$ a\xdebug.remote_connect_back=1' /etc/php5/mods-available/xdebug.ini
+#RUN sed -i '$ a\xdebug.var_display_max_depth=4' /etc/php5/mods-available/xdebug.ini
+#RUN sed -i '$ a\xdebug.max_nesting_level=500' /etc/php5/mods-available/xdebug.ini
+#RUN sed -i '$ a\xdebug.var_display_max_data=-1' /etc/php5/mods-available/xdebug.ini
+#RUN sed -i '$ a\xdebug.remote_enable=1' /etc/php5/mods-available/xdebug.ini
+#RUN sed -i '$ a\xdebug.remote_connect_back=1' /etc/php5/mods-available/xdebug.ini
 
 RUN sed -i '$ a\opcache.max_accelerated_files=20000' /etc/php5/mods-available/opcache.ini
 RUN sed -i '$ a\opcache.interned_strings_buffer=8' /etc/php5/mods-available/opcache.ini
